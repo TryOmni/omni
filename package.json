@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://themoonwalker1.github.io/pennapps2024",
   "dependencies": {
     "@react-three/fiber": "^8.17.7",
     "@testing-library/jest-dom": "^5.17.0",
