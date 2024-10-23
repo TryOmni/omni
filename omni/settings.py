@@ -121,7 +121,7 @@ USE_TZ = True
 import socket
 
 hostname = socket.gethostname()
-STATIC_URL = f'http://{hostname}:3000/static/'
+STATIC_URL = f'http://localhost:3000/static/'
 # Add these imports at the top
 import os
 

@@ -16,6 +16,8 @@ services:
       - DATABASE_URL=postgres://your_db_user:your_db_password@db:5432/your_db_name
       - DJANGO_SECRET_KEY=your_secret_key
       - DEBUG=False
+    networks:
+      - omni_network  # Connects to the custom network
 
   ml:
     build:
@@ -30,6 +32,8 @@ services:
       - db
     environment:
       - DATABASE_URL=postgres://your_db_user:your_db_password@db:5432/your_db_name
+    networks:
+      - omni_network  # Connects to the custom network
 
   react:
     build:
@@ -40,7 +44,9 @@ services:
     depends_on:
       - web
     environment:
-      - REACT_APP_API_URL=http://localhost:8000  # Environment variable to point to your backend
+      - REACT_APP_API_URL=http://web:8000  # Environment variable to point to your backend container by name
+    networks:
+      - omni_network  # Connects to the custom network
 
   db:
     image: postgres:13
@@ -52,6 +58,12 @@ services:
       POSTGRES_PASSWORD: your_db_password
     ports:
       - "5432:5432"
+    networks:
+      - omni_network  # Connects to the custom network
 
 volumes:
   postgres_data:
+
+networks:
+  omni_network:
+    driver: bridge  # Uses the default bridge driver
