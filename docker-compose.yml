@@ -1,34 +1,46 @@
 version: '3.8'
 
 services:
-  django:
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile  # Dockerfile for the Django backend
+    command: gunicorn omni.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-
-  react:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend:/app
-    ports:
-      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://your_db_user:your_db_password@db:5432/your_db_name
+      - DJANGO_SECRET_KEY=your_secret_key
+      - DEBUG=False
 
   ml:
     build:
       context: ./ml_backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile  # Dockerfile for the ML backend
+    command: gunicorn app:app --bind 0.0.0.0:5500  # Assuming you're using Gunicorn with Flask or FastAPI
     volumes:
       - ./ml_backend:/app
     ports:
       - "5500:5500"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://your_db_user:your_db_password@db:5432/your_db_name
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile  # Dockerfile for the React frontend
+    ports:
+      - "3000:80"  # Maps port 80 in the container to port 3000 on your machine
+    depends_on:
+      - web
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000  # Environment variable to point to your backend
 
   db:
     image: postgres:13
@@ -38,6 +50,8 @@ services:
       POSTGRES_DB: your_db_name
       POSTGRES_USER: your_db_user
       POSTGRES_PASSWORD: your_db_password
+    ports:
+      - "5432:5432"
 
 volumes:
   postgres_data:

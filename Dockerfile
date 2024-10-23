@@ -13,11 +13,11 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copy project
+# Copy project files
 COPY . /app/
 
 # Expose port 8000
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run the application with Gunicorn
+CMD ["gunicorn", "omni.wsgi:application", "--bind", "0.0.0.0:8000"]
