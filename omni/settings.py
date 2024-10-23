@@ -118,11 +118,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # STATIC_URL = 'static/'
-import socket
+import os
 
-hostname = socket.gethostname()
-STATIC_URL = f'http://localhost:3000/static/'
-# Add these imports at the top
+# Get the current hostname from the environment or use a default
+CURRENT_HOSTNAME = os.getenv('CURRENT_HOSTNAME', 'localhost')
+
+# Update STATIC_URL to use the current hostname
+STATIC_URL = f'http://{CURRENT_HOSTNAME}:3000/static/'
 import os
 
 # Add these settings

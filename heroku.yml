@@ -12,7 +12,7 @@ release:
   image: web  # Use the image built from the Dockerfile in the build section
   command:
     - python manage.py migrate  # Run Django migrations
-#    - python manage.py collectstatic --noinput  # Collect Django static files
+    - python manage.py collectstatic --noinput  # Collect Django static files
 
 run:
   web:
