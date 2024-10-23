@@ -9,4 +9,5 @@ release:
 
 run:
   web:
+    image: web
     command: gunicorn omni.wsgi:application --bind 0.0.0.0:$PORT
