@@ -1,0 +1,29 @@
+setup:
+  addons:
+    - plan: heroku-postgresql:hobby-dev  # Add a free PostgreSQL database
+
+build:
+  docker:
+    web: Dockerfile  # Dockerfile for the Django backend
+    ml: ./ml_backend/Dockerfile  # Dockerfile for the ML backend
+    react: ./frontend/Dockerfile  # Dockerfile for the React frontend
+
+release:
+  image: web  # Use the image built from the Dockerfile in the build section
+  command:
+    - python manage.py migrate  # Run Django migrations
+    - python manage.py collectstatic --noinput  # Collect Django static files
+
+run:
+  web:
+    image: web  # Use the image built from the Dockerfile in the build section
+    command:
+      - gunicorn omni.wsgi:application --bind 0.0.0.0:$PORT
+  ml:
+    image: ml  # Use the image built from the Dockerfile in the build section
+    command:
+      - gunicorn app:app --bind 0.0.0.0:5500  # Modify as needed based on ML backend
+  react:
+    image: react  # Use the image built from the Dockerfile in the build section
+    command:
+      - nginx -g 'daemon off;'  # Nginx serves the built React app
