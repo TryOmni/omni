@@ -1,4 +1,4 @@
-# Dockerfile for ML backend
+# Dockerfile for ML Backend
 FROM python:3.9-slim
 
 # Set environment variables
@@ -13,11 +13,11 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copy project
+# Copy project files
 COPY . /app/
 
 # Expose port 5500
 EXPOSE 5500
 
-# Run the application
-CMD ["python", "app.py"]
+# Run the application with Gunicorn (assuming Flask app named "app")
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5500"]
