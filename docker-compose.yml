@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile  # Dockerfile for the Django backend
+    command: gunicorn omni.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - omni_network  # Connects to the custom network
+
+  ml:
+    build:
+      context: ./ml_backend
+      dockerfile: Dockerfile  # Dockerfile for the ML backend
+    command: gunicorn app:app --bind 0.0.0.0:5500  # Assuming you're using Gunicorn with Flask or FastAPI
+    volumes:
+      - ./ml_backend:/app
+    ports:
+      - "5500:5500"
+    networks:
+      - omni_network  # Connects to the custom network
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile  # Dockerfile for the React frontend
+    ports:
+      - "3000:80"  # Maps port 80 in the container to port 3000 on your machine
+    depends_on:
+      - web
+    environment:
+      - REACT_APP_API_URL=http://web:8000  # Environment variable to point to your backend container by name
+    networks:
+      - omni_network  # Connects to the custom network
+
+networks:
+  omni_network:
+    driver: bridge  # Uses the default bridge driver
